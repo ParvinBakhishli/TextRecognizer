@@ -1,5 +1,6 @@
 package com.parvin.textrecognizer
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
@@ -18,6 +19,7 @@ class TextRecognitionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityTextRecognitionBinding
     private lateinit var uri : Uri
     private val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+    private lateinit var detectedText: String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,24 +44,30 @@ class TextRecognitionActivity : AppCompatActivity() {
         }
 
         textViewTranslate.setOnClickListener {
+            val intent = Intent(this@TextRecognitionActivity, TranslationActivity::class.java)
+            intent.putExtra("source_text", detectedText)
+            startActivity(intent)
         }
     }
 
-    private fun detectTextFromImage(){
-        val image = InputImage.fromBitmap(getBitmapFromUri(uri ?: return) ?: return,0)
+
+
+    private fun detectTextFromImage(): String{
+        val image = InputImage.fromBitmap(getBitmapFromUri(uri) ?: return "",0)
+        detectedText = "Parvin"
 
         recognizer.process(image).addOnSuccessListener { visionText ->
-            val resultText = visionText.text
-            binding.textViewDetectedText.text = resultText
+            detectedText = visionText.text
+            binding.textViewDetectedText.text = detectedText
             Toast.makeText(applicationContext,"Success", Toast.LENGTH_SHORT).show()
         }.addOnFailureListener {
             binding.textViewDetectedText.text = "Text recognition failed: ${it.message}"
             Toast.makeText(applicationContext,"Failed", Toast.LENGTH_SHORT).show()
-
         }
+        return detectedText
     }
 
-    fun getBitmapFromUri(uri: Uri): Bitmap? {
+    private fun getBitmapFromUri(uri: Uri): Bitmap? {
         return try {
             MediaStore.Images.Media.getBitmap(contentResolver, uri)
         } catch (e: IOException) {

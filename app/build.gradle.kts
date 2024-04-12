@@ -65,5 +65,8 @@ dependencies {
     //Text recognition
     implementation("com.google.mlkit:text-recognition:16.0.0")
 
+    //Translation
+    implementation("com.google.mlkit:translate:17.0.2")
+
 
 }
