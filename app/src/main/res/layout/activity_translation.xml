@@ -4,35 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TranslationActivity"
-    android:padding="16dp"
     android:gravity="end"
-    android:orientation="vertical">
-
-
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".activities.TranslationActivity">
 
     <Spinner
         android:id="@+id/spinnerSourceLanguage"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" >
-
-        <TextView
-            android:id="@+id/textViewSourceText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-    </ScrollView>
-
-    <Spinner
-        android:id="@+id/spinnerTargetLanguage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -40,11 +20,41 @@
         android:layout_weight="1">
 
         <TextView
-            android:id="@+id/textViewTargetText"
+            android:id="@+id/textViewSourceText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
     </ScrollView>
+
+    <Spinner
+        android:id="@+id/spinnerTargetLanguage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textViewTargetText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </ScrollView>
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progressIndicator"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:visibility="gone" />
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -56,16 +66,15 @@
             android:id="@+id/buttonTranslate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Translate"/>
+            android:text="Translate" />
 
         <Button
             android:id="@+id/buttonCopy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Copy"/>
+            android:text="Copy" />
 
     </LinearLayout>
-
 
 
 </LinearLayout>

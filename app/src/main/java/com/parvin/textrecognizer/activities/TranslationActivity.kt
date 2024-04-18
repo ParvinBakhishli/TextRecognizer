@@ -1,4 +1,4 @@
-package com.parvin.textrecognizer
+package com.parvin.textrecognizer.activities
 
 import android.os.Bundle
 import android.view.View
@@ -6,27 +6,35 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.mlkit.common.model.DownloadConditions
+import androidx.core.view.isVisible
+import com.google.mlkit.common.model.RemoteModelManager
 import com.google.mlkit.nl.translate.TranslateLanguage
+import com.google.mlkit.nl.translate.TranslateRemoteModel
 import com.google.mlkit.nl.translate.Translation
 import com.google.mlkit.nl.translate.Translator
 import com.google.mlkit.nl.translate.TranslatorOptions
+import com.parvin.textrecognizer.R
 import com.parvin.textrecognizer.databinding.ActivityTranslationBinding
+import com.parvin.textrecognizer.utils.shortToast
+import com.parvin.textrecognizer.utils.showError
 
 class TranslationActivity : AppCompatActivity() {
-    private lateinit var binding : ActivityTranslationBinding
+    private lateinit var binding: ActivityTranslationBinding
     private lateinit var targetText: String
     private lateinit var sourceText: String
-    private lateinit var options: TranslatorOptions
     private lateinit var translator: Translator
     private lateinit var selectedSourceLanguageCode: String
     private lateinit var selectedSourceLanguageName: String
     private lateinit var selectedTargetLanguageCode: String
     private lateinit var selectedTargetLanguageName: String
 
-    //add require wifi later
-    private val conditions = DownloadConditions.Builder().build()
-    private val adapter by lazy { ArrayAdapter(this, R.layout.spinner_item, supportedLanguageNames) }
+    private val adapter by lazy {
+        ArrayAdapter(
+            this,
+            R.layout.spinner_item,
+            supportedLanguageNames
+        )
+    }
 
     private val languageMap = mapOf(
         "en" to "English",
@@ -62,7 +70,8 @@ class TranslationActivity : AppCompatActivity() {
         binding = ActivityTranslationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        adapter.setDropDownViewResource(R.layout.spinner_item)
+//        adapter.setDropDownViewResource(R.layout.spinner_item)
+        adapter.setDropDownViewResource(android.R.layout.simple_list_item_1)
         binding.spinnerSourceLanguage.adapter = adapter
         binding.spinnerTargetLanguage.adapter = adapter
 
@@ -74,7 +83,7 @@ class TranslationActivity : AppCompatActivity() {
 
     }
 
-    private fun ActivityTranslationBinding.setUpListeners(){
+    private fun ActivityTranslationBinding.setUpListeners() {
         spinnerSourceLanguage.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -118,33 +127,59 @@ class TranslationActivity : AppCompatActivity() {
     }
 
     private fun translate(text: String) {
-        downloadRequiredModel(selectedSourceLanguageCode, selectedTargetLanguageCode)
+        binding.progressIndicator.isVisible = true
 
-        translator.translate(text)
-            .addOnSuccessListener {
-                targetText = it
-                binding.textViewTargetText.text = targetText
-            }
-            .addOnFailureListener {
-                Toast.makeText(applicationContext, "Error: $it", Toast.LENGTH_SHORT).show()
-            }
-       // return targetText
+        downloadRequiredModel(selectedSourceLanguageCode, selectedTargetLanguageCode) {
+            translator.translate(text)
+                .addOnSuccessListener {
+                    targetText = it
+                    binding.textViewTargetText.text = targetText
+                }
+                .addOnFailureListener {
+                    showError(it.message ?: "Unexpected Error")
+                }
+                .addOnCompleteListener {
+                    binding.progressIndicator.isVisible = false
+
+                    deleteModel(selectedSourceLanguageCode) {
+                        shortToast("$selectedSourceLanguageCode is deleted")
+                    }
+                    deleteModel(selectedTargetLanguageCode) {
+                        shortToast("$selectedTargetLanguageCode is deleted")
+                    }
+                }
+        }
     }
 
-    private fun downloadRequiredModel(sourceCode: String, targetCode: String){
-        options = TranslatorOptions.Builder()
-            .setSourceLanguage(TranslateLanguage.fromLanguageTag(sourceCode)?:return)
-            .setTargetLanguage(TranslateLanguage.fromLanguageTag(targetCode)?:return)
+    private fun downloadRequiredModel(
+        sourceCode: String, targetCode: String,
+        onModelAvailable: () -> Unit
+    ) {
+        val options = TranslatorOptions.Builder()
+            .setSourceLanguage(TranslateLanguage.fromLanguageTag(sourceCode) ?: return)
+            .setTargetLanguage(TranslateLanguage.fromLanguageTag(targetCode) ?: return)
             .build()
-        translator = Translation.getClient(options)
 
-        translator.downloadModelIfNeeded(conditions)
+        translator = Translation.getClient(options)
+        translator.downloadModelIfNeeded()
             .addOnSuccessListener {
-                Toast.makeText(applicationContext, "Model Downloaded successfully", Toast.LENGTH_SHORT).show()
+                onModelAvailable()
             }
             .addOnFailureListener {
-                Toast.makeText(applicationContext, "Error: $it", Toast.LENGTH_SHORT).show()
+                showError(it.message)
             }
+    }
+
+    private fun deleteModel(code: String, onSuccess: () -> Unit = {}) {
+        RemoteModelManager.getInstance()
+            .deleteDownloadedModel(TranslateRemoteModel.Builder(code).build())
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { showError(it.message) }
+    }
+
+    override fun onDestroy() {
+        translator.close()
+        super.onDestroy()
     }
 
 }

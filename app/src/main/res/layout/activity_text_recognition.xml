@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:padding="24dp"
     android:gravity="center"
-    tools:context=".TextRecognitionActivity">
+    tools:context=".activities.TextRecognitionActivity">
 
     <ImageView
         android:id="@+id/imageViewImage"

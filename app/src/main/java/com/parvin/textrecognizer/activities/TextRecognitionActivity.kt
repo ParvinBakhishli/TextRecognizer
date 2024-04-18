@@ -1,4 +1,4 @@
-package com.parvin.textrecognizer
+package com.parvin.textrecognizer.activities
 
 import android.content.Intent
 import android.graphics.Bitmap

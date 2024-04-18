@@ -1,4 +1,4 @@
-package com.parvin.textrecognizer
+package com.parvin.textrecognizer.activities
 
 import android.Manifest
 import android.content.ContentValues
@@ -45,7 +45,7 @@ class CameraActivity : AppCompatActivity() {
     private val cropImage = registerForActivityResult(CropImageContract()) { result ->
          result.uriContent?.let { uri ->
              startActivity(
-                 Intent(this,TextRecognitionActivity::class.java).putExtra("image_uri", uri.toString())
+                 Intent(this, TextRecognitionActivity::class.java).putExtra("image_uri", uri.toString())
              )
          }
     }
