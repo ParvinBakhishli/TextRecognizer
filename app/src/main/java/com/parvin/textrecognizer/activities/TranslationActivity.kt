@@ -1,5 +1,7 @@
 package com.parvin.textrecognizer.activities
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -13,7 +15,6 @@ import com.google.mlkit.nl.translate.TranslateRemoteModel
 import com.google.mlkit.nl.translate.Translation
 import com.google.mlkit.nl.translate.Translator
 import com.google.mlkit.nl.translate.TranslatorOptions
-import com.parvin.textrecognizer.R
 import com.parvin.textrecognizer.databinding.ActivityTranslationBinding
 import com.parvin.textrecognizer.utils.shortToast
 import com.parvin.textrecognizer.utils.showError
@@ -31,7 +32,7 @@ class TranslationActivity : AppCompatActivity() {
     private val adapter by lazy {
         ArrayAdapter(
             this,
-            R.layout.spinner_item,
+            android.R.layout.simple_list_item_1,
             supportedLanguageNames
         )
     }
@@ -84,6 +85,7 @@ class TranslationActivity : AppCompatActivity() {
     }
 
     private fun ActivityTranslationBinding.setUpListeners() {
+
         spinnerSourceLanguage.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -93,6 +95,7 @@ class TranslationActivity : AppCompatActivity() {
             ) {
                 selectedSourceLanguageCode = supportedLanguageCodes[position]
                 selectedSourceLanguageName = languageMap[selectedSourceLanguageCode] ?: return
+
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -111,6 +114,9 @@ class TranslationActivity : AppCompatActivity() {
             ) {
                 selectedTargetLanguageCode = supportedLanguageCodes[position]
                 selectedTargetLanguageName = languageMap[selectedTargetLanguageCode] ?: return
+
+                translate(sourceText)
+
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -120,8 +126,8 @@ class TranslationActivity : AppCompatActivity() {
 
         }
 
-        buttonTranslate.setOnClickListener {
-            translate(sourceText)
+        imageViewCopy.setOnClickListener {
+            copyToClipBoard()
         }
 
     }
@@ -141,12 +147,12 @@ class TranslationActivity : AppCompatActivity() {
                 .addOnCompleteListener {
                     binding.progressIndicator.isVisible = false
 
-                    deleteModel(selectedSourceLanguageCode) {
+                    /*deleteModel(selectedSourceLanguageCode) {
                         shortToast("$selectedSourceLanguageCode is deleted")
                     }
                     deleteModel(selectedTargetLanguageCode) {
                         shortToast("$selectedTargetLanguageCode is deleted")
-                    }
+                    }*/
                 }
         }
     }
@@ -175,6 +181,14 @@ class TranslationActivity : AppCompatActivity() {
             .deleteDownloadedModel(TranslateRemoteModel.Builder(code).build())
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { showError(it.message) }
+    }
+
+    private fun copyToClipBoard() {
+        val clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+
+        val clipData = ClipData.newPlainText("text",targetText)
+        clipboardManager.setPrimaryClip(clipData)
+        shortToast("Copied to Clipboard")
     }
 
     override fun onDestroy() {

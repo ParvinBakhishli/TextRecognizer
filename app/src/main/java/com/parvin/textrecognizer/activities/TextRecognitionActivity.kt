@@ -1,5 +1,7 @@
 package com.parvin.textrecognizer.activities
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -12,6 +14,7 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.parvin.textrecognizer.databinding.ActivityTextRecognitionBinding
+import com.parvin.textrecognizer.utils.shortToast
 import java.io.IOException
 
 class TextRecognitionActivity : AppCompatActivity() {
@@ -40,7 +43,8 @@ class TextRecognitionActivity : AppCompatActivity() {
 
         }
 
-        textViewCopy.setOnClickListener {
+        imageViewCopy.setOnClickListener {
+            copyToClipboard()
         }
 
         textViewTranslate.setOnClickListener {
@@ -49,6 +53,7 @@ class TextRecognitionActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
 
 
 
@@ -74,6 +79,13 @@ class TextRecognitionActivity : AppCompatActivity() {
             e.printStackTrace()
             null
         }
+    }
+
+    private fun copyToClipboard() {
+        val clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        val clipData = ClipData.newPlainText("text",detectedText)
+        clipboardManager.setPrimaryClip(clipData)
+        shortToast("Copied to Clipboard")
     }
 
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:gravity="end"
     android:orientation="vertical"
     android:padding="16dp"
@@ -17,10 +17,13 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:padding="18dp"
+        android:background="@drawable/scroll_view_bg"
         android:layout_weight="1">
 
         <TextView
             android:id="@+id/textViewSourceText"
+            android:textSize="16sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -38,14 +41,26 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@drawable/scroll_view_bg"
+            android:padding="18dp">
 
             <TextView
                 android:id="@+id/textViewTargetText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textSize="16sp" />
 
         </ScrollView>
+
+        <ImageView
+            android:id="@+id/imageViewCopy"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_gravity="end"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/ic_copy" />
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progressIndicator"
@@ -60,19 +75,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="end"
+        android:padding="5dp"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/buttonTranslate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Translate" />
-
-        <Button
-            android:id="@+id/buttonCopy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Copy" />
 
     </LinearLayout>
 

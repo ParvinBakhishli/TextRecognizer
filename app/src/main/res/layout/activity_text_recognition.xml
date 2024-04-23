@@ -5,8 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/white"
     android:padding="24dp"
-    android:gravity="center"
+    android:gravity="end"
     tools:context=".activities.TextRecognitionActivity">
 
     <ImageView
@@ -19,22 +20,40 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        android:backgroundTint="@color/deep_moss_green"
         android:text="Detect text"/>
 
-
-    <ScrollView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <TextView
-            android:id="@+id/textViewDetectedText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:text="The detected text will appear here"/>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="18dp"
+            android:background="@drawable/scroll_view_bg">
 
-    </ScrollView>
+            <TextView
+                android:id="@+id/textViewDetectedText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:text="The detected text will appear here"/>
+
+        </ScrollView>
+
+        <ImageView
+            android:id="@+id/imageViewCopy"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/ic_copy"
+            android:layout_gravity="end"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="10dp"/>
+
+    </FrameLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -47,20 +66,11 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:textStyle="italic"
+            android:textColor="@color/deep_moss_green"
             android:text="Translate"/>
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
 
-        <TextView
-            android:id="@+id/textViewCopy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textStyle="italic"
-            android:text="Copy"/>
+
     </LinearLayout>
 
 </LinearLayout>
